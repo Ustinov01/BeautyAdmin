@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 
 type HttpRequestMethods = 'GET' | 'POST' | 'PATCH' | 'DELETE';
+export type loadingStatusOptions = 'idle' | 'loading' | 'error';
 
 interface HttpHeader {
     [key: string]: string
@@ -10,13 +11,13 @@ interface HttpHeader {
 
 interface RequestConfig {
     url: string,
-    method: HttpRequestMethods,
+    method?: HttpRequestMethods,
     body?: string | null,
-    headers: HttpHeader
+    headers?: HttpHeader
 }
 
 export const useHttp = () => {
-    const [loadingStatus, setLoadingStatus] = useState<string>('idle');
+    const [loadingStatus, setLoadingStatus] = useState<loadingStatusOptions>('idle');
 
 
     const request = useCallback(
