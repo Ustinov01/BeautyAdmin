@@ -1,5 +1,5 @@
 import { useHttp } from "../hooks/http.hook";
-import harRequiredFields from "../utils/hasReuiredFields";
+import hasRequiredFields from "../utils/hasReuiredFields";
 import dayjs from "dayjs";
 
 import { IAppointment, ActiveAppointment } from "../shared/interfaces/appointment.interface";
@@ -13,7 +13,7 @@ const useAppointmentService = () => {
     const getAllAppointments = async (): Promise<IAppointment[]> => {
         const res = await request({ url: _apiBase });
 
-        if (res.every((item: IAppointment) => harRequiredFields(item, requiredFields))) {
+        if (res.every((item: IAppointment) => hasRequiredFields(item, requiredFields))) {
             return res;
         } else {
             throw new Error('Data have no all the fields');
@@ -35,10 +35,23 @@ const useAppointmentService = () => {
         return transformed;
     }
 
+    const cancelOneAppointment = async (id: number) => {
+        return await request(
+            {
+                url: `${_apiBase}/${id}`,
+                method: 'PATCH',
+                body: JSON.stringify({ canceled: true })
+            });
+    }
+
+
+
+
     return {
         loadingStatus,
         getAllAppointments,
-        getAllActiveAppointments
+        getAllActiveAppointments,
+        cancelOneAppointment
     }
 }
 

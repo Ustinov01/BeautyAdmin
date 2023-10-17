@@ -1,21 +1,37 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, memo, useContext } from "react";
 import "./appointmentItem.scss";
 import { IAppointment } from "../../shared/interfaces/appointment.interface";
+import { AppointmentContext } from "../../context/appointments/AppointmentContext";
 import dayjs from "dayjs";
 import { Optional } from "utility-types";
 
 type AppointmentProps = Optional<IAppointment, 'canceled'> & {
-	openModal: (state: boolean) => void;
-	selectId: () => void;
+	openModal: (state: number) => void;
 };
 
-function AppointmentItem({ name, phone, date, service, canceled, openModal, selectId }: AppointmentProps) {
+
+
+
+const AppointmentItem = memo(({ id, name, phone, date, service, canceled, openModal }: AppointmentProps) => {
 	const [timeLeft, setTimeLeft] = useState<string | null>(null);
+
+	const { getActiveAppointments } = useContext(AppointmentContext);
 
 	useEffect(() => {
 		setTimeLeft(`${dayjs(date).diff(undefined, 'h')}:${dayjs(date).diff(undefined, 'm') % 60}`);
+
 		const intervalId = setInterval(() => {
-			setTimeLeft(`${dayjs(date).diff(undefined, 'h')}:${dayjs(date).diff(undefined, 'm') % 60}`);
+			if (dayjs(date).diff(undefined, "m") <= 0) {
+				if (getActiveAppointments) {
+					getActiveAppointments();
+				}
+				clearInterval(intervalId);
+			} else {
+				setTimeLeft(
+					`${dayjs(date).diff(undefined, "h")}:${dayjs(date).diff(undefined, "m") % 60
+					}`
+				);
+			}
 		}, 60000);
 
 
@@ -25,7 +41,6 @@ function AppointmentItem({ name, phone, date, service, canceled, openModal, sele
 	}, [date]);
 
 	const formattedDate = dayjs(date).format('DD/MM/YYYY HH:mm');
-
 
 	return (
 		<div className="appointment">
@@ -42,8 +57,7 @@ function AppointmentItem({ name, phone, date, service, canceled, openModal, sele
 						<span className="appointment__timer">{timeLeft}</span>
 					</div>
 					<button className="appointment__cancel" onClick={() => {
-						openModal(true);
-						selectId();
+						openModal(id);
 					}
 					}>
 						Cancel</button>
@@ -52,6 +66,6 @@ function AppointmentItem({ name, phone, date, service, canceled, openModal, sele
 			{canceled ? <div className="appointment__canceled">Canceled</div> : null}
 		</div>
 	);
-}
+})
 
 export default AppointmentItem;
