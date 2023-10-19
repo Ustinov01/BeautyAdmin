@@ -10,13 +10,13 @@ import CancelModal from "../modal/CancelModal";
 
 function AppointmentList() {
 
-	const { activeAppointments, getActiveAppointments, appointmentLoadingStatus } = useContext(AppointmentContext);
+	const { activeAppointments, getActiveAppointments, appointmentLoadingStatus, calendarDate } = useContext(AppointmentContext);
 	const [isOpen, setIsOpen] = useState(false);
 	const [selectedId, selectId] = useState(0);
 
 	useEffect(() => {
 		getActiveAppointments();
-	}, []);
+	}, [calendarDate]);
 
 	const handleOpenModal = useCallback((id: number) => {
 		setIsOpen(true);

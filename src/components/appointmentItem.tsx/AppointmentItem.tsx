@@ -5,8 +5,8 @@ import { AppointmentContext } from "../../context/appointments/AppointmentContex
 import dayjs from "dayjs";
 import { Optional } from "utility-types";
 
-type AppointmentProps = Optional<IAppointment, 'canceled'> & {
-	openModal: (state: number) => void;
+export type AppointmentProps = Optional<IAppointment, 'canceled'> & {
+	openModal?: (state: number) => void;
 };
 
 
@@ -50,7 +50,7 @@ const AppointmentItem = memo(({ id, name, phone, date, service, canceled, openMo
 				<span className="appointment__service">Service: {service}</span>
 				<span className="appointment__phone">Phone: {phone}</span>
 			</div>
-			{!canceled ? (
+			{!canceled && openModal ? (
 				<>
 					<div className="appointment__time">
 						<span>Time left:</span>
